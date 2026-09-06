@@ -1,0 +1,9 @@
+node_modules/
+web-ext-artifacts/
+.dev-profile/
+
+# Generated from icon.png by scripts/icons.mjs, before every start/lint/build.
+src/icons/
+.direnv/
+result
+result-*

@@ -1,0 +1,90 @@
+{
+  "manifest_version": 3,
+  "name": "Holy Shelf",
+  "version": "0.0.0",
+  "description": "Rate and save HOLY flavors. Unofficial, not affiliated with HOLY.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "holy-shelf@jhofer.de",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.holy.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.holy.com/pages/account*"
+      ],
+      "css": [
+        "content/shelf.css"
+      ],
+      "js": [
+        "messages/en.js",
+        "messages/de.js",
+        "lib/i18n.js",
+        "lib/icons.js",
+        "lib/storage.js",
+        "lib/shopify.js",
+        "content/controls.js",
+        "content/account.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "*://*.holy.com/products/*",
+        "*://*.holy.com/collections/*/products/*"
+      ],
+      "js": [
+        "messages/en.js",
+        "messages/de.js",
+        "lib/i18n.js",
+        "lib/icons.js",
+        "lib/storage.js",
+        "lib/shopify.js",
+        "content/controls.js",
+        "content/product.js"
+      ],
+      "css": [
+        "content/shelf.css"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "*://*.holy.com/collections/*"
+      ],
+      "js": [
+        "messages/en.js",
+        "messages/de.js",
+        "lib/i18n.js",
+        "lib/icons.js",
+        "lib/storage.js",
+        "lib/shopify.js",
+        "content/collection.js"
+      ],
+      "css": [
+        "content/shelf.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
