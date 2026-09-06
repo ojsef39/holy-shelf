@@ -17,7 +17,7 @@
     "prebuild": "npm run icons",
     "presign": "npm run icons",
     "build": "web-ext build --source-dir src --overwrite-dest",
-    "sign": "web-ext sign --source-dir src --channel listed"
+    "sign": "web-ext sign --source-dir src --channel listed --approval-timeout 0"
   },
   "devDependencies": {
     "@semantic-release/exec": "^7.1.0",
