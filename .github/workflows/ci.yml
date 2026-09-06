@@ -18,7 +18,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           # semantic-release needs the full history to work out the next
           # version, and its own credentials to push the release commit.
