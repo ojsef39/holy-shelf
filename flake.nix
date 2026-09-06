@@ -39,8 +39,22 @@
         # Extra args pass through to web-ext, e.g. d-start --devtools.
         d-start = pkgs.writeShellScriptBin "d-start" ''
           ${preamble}
+          # web-ext will launch against a half-made profile directory, which
+          # sends Firefox to the profile manager instead of the browser. Only a
+          # profile with prefs.js is real; rebuild anything else.
+          if [ -d .dev-profile ] && [ ! -f .dev-profile/prefs.js ]; then
+            echo "=> Rebuilding incomplete .dev-profile..."
+            rm -rf .dev-profile
+          fi
+          # The profile path must be ABSOLUTE. Given a bare name, web-ext looks
+          # it up in profiles.ini instead of treating it as a directory, and
+          # Firefox opens the profile manager rather than the browser.
           echo "=> Launching Firefox with Holy Shelf loaded..."
-          ${pkgs.nodejs_22}/bin/npm start -- "$@"
+          ${pkgs.nodejs_22}/bin/npm start -- \
+            --firefox-profile "$PWD/.dev-profile" \
+            --profile-create-if-missing \
+            --keep-profile-changes \
+            "$@"
         '';
 
         d-lint = pkgs.writeShellScriptBin "d-lint" ''

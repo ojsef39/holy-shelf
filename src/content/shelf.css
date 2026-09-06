@@ -1,0 +1,611 @@
+/*
+ * Everything is prefixed hs- so nothing collides with the theme's own classes,
+ * and every property is set explicitly rather than inherited, because the
+ * surrounding page's CSS is not ours and changes without warning.
+ *
+ * Fonts ARE inherited on purpose — the panel should look like part of the page.
+ */
+
+:root {
+  --hs-pink: #f7a2c4;
+  --hs-cream: #f9f0de;
+  --hs-yellow: #ffc90d;
+  --hs-lilac: #c9bef2;
+  --hs-ink: #141210;
+  --hs-paper: #ffffff;
+  --hs-warm: #8a7f72;
+  --hs-ok-bg: #dcefdf;
+  --hs-ok-fg: #1e6b39;
+  --hs-out-bg: #f7deda;
+  --hs-out-fg: #a33526;
+}
+
+/* We toggle is-tab-hidden like the theme does, but the theme's own rule is
+   hard-coded to its two panel classes:
+     .account--order-list.is-tab-hidden, .account--addresses.is-tab-hidden
+   so it never applies to ours. This is that rule, for our panel. */
+[data-account-panel="lists"].is-tab-hidden {
+  display: none !important;
+}
+
+/* The Rewards content is a separate #main section, so our panel cannot hide it
+   the way the theme's panels do — it stayed on screen underneath our cards.
+   The theme drops it only when one of ITS tabs is clicked, by a mechanism that
+   appears in neither its CSS nor an inline style, so rather than imitate that,
+   we hide every other section while our tab is active. Purely additive: the
+   theme's own state is never touched, and removing the class restores it. */
+html.hs-lists-active
+  #main
+  > .shopify-section:not(.shopify-section--main-customers-account) {
+  display: none !important;
+}
+
+.hs-root {
+  display: block;
+  padding: 34px 0 56px;
+  color: var(--hs-ink);
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.hs-root *,
+.hs-root *::before,
+.hs-root *::after {
+  box-sizing: border-box;
+}
+
+.hs-root :focus-visible {
+  outline: 3px solid var(--hs-ink);
+  outline-offset: 2px;
+}
+
+.hs-heading {
+  margin: 0 0 4px;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--hs-ink);
+  text-wrap: balance;
+}
+
+.hs-heading--detail {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 30px;
+  margin-bottom: 14px;
+}
+
+.hs-hint {
+  margin: 0 0 26px;
+  color: var(--hs-warm);
+  font-size: 14px;
+}
+
+/* ---------- overview ---------- */
+
+.hs-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 18px;
+}
+
+.hs-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border: 2px solid var(--hs-ink);
+  border-radius: 18px;
+  background: var(--hs-paper);
+  font: inherit;
+  color: var(--hs-ink);
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.hs-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 0 -2px var(--hs-ink);
+}
+
+.hs-collage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5px;
+  background: var(--hs-ink);
+  border-bottom: 2px solid var(--hs-ink);
+  aspect-ratio: 1 / 0.86;
+}
+
+.hs-collage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: var(--hs-pink);
+}
+
+.hs-collage div {
+  background: var(--hs-cream);
+}
+
+.hs-card--muted .hs-collage img {
+  filter: saturate(0.16);
+}
+
+.hs-card--muted:hover .hs-collage img {
+  filter: saturate(0.55);
+}
+
+.hs-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 13px 15px 15px;
+}
+
+.hs-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.hs-card-meta {
+  color: var(--hs-warm);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.hs-ico {
+  flex: none;
+}
+
+/* ---------- detail ---------- */
+
+.hs-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 10px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--hs-warm);
+  cursor: pointer;
+}
+
+.hs-back:hover {
+  color: var(--hs-ink);
+}
+
+.hs-sortbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.hs-sortbar > span:first-child {
+  margin-right: 3px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hs-warm);
+}
+
+.hs-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border: 1.5px solid rgba(20, 18, 16, 0.3);
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  color: var(--hs-ink);
+  cursor: pointer;
+}
+
+.hs-chip:hover {
+  border-color: var(--hs-ink);
+}
+
+.hs-chip[aria-pressed="true"] {
+  background: var(--hs-ink);
+  border-color: var(--hs-ink);
+  color: var(--hs-cream);
+  font-weight: 600;
+}
+
+.hs-dir {
+  font-size: 10px;
+  opacity: 0.85;
+}
+
+.hs-rows {
+  border: 2px solid var(--hs-ink);
+  border-radius: 18px;
+  background: var(--hs-paper);
+  overflow: hidden;
+}
+
+.hs-row {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 13px 16px;
+  border-bottom: 1px solid rgba(20, 18, 16, 0.13);
+}
+
+.hs-row:last-child {
+  border-bottom: none;
+}
+
+.hs-row:hover {
+  background: rgba(247, 162, 196, 0.14);
+}
+
+.hs-row > img {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border: 1.5px solid var(--hs-ink);
+  border-radius: 11px;
+  background: var(--hs-pink);
+  display: block;
+}
+
+.hs-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hs-row-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--hs-ink);
+  text-decoration: none;
+}
+
+.hs-row-title:hover {
+  text-decoration: underline;
+}
+
+/* The variant a row refers to: the product name under a syrup flavor, or the
+   saved pack size when it isn't the default one. */
+.hs-row-sub {
+  font-size: 12.5px;
+  color: var(--hs-warm);
+  line-height: 1.2;
+}
+
+.hs-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--hs-warm);
+  font-variant-numeric: tabular-nums;
+}
+
+.hs-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.hs-badge--ok {
+  background: var(--hs-ok-bg);
+  color: var(--hs-ok-fg);
+}
+
+.hs-badge--out {
+  background: var(--hs-out-bg);
+  color: var(--hs-out-fg);
+}
+
+.hs-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.hs-open {
+  padding: 6px 14px;
+  border: 2px solid var(--hs-ink);
+  border-radius: 999px;
+  background: var(--hs-yellow);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--hs-ink);
+  white-space: nowrap;
+}
+
+.hs-open:hover {
+  background: #ffd84a;
+}
+
+.hs-remove {
+  padding: 4px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--hs-warm);
+  line-height: 0;
+  cursor: pointer;
+}
+
+.hs-remove:hover {
+  background: var(--hs-out-bg);
+  color: var(--hs-out-fg);
+}
+
+.hs-empty {
+  padding: 42px 20px;
+  border: 2px dashed rgba(20, 18, 16, 0.25);
+  border-radius: 18px;
+  text-align: center;
+  color: var(--hs-warm);
+}
+
+.hs-empty p {
+  margin: 0 0 4px;
+}
+
+/* ---------- notes (shared with the product page) ---------- */
+
+.hs-note {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 3px;
+  padding: 0 0 0 9px;
+  border: none;
+  border-left: 2px solid var(--hs-lilac);
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--hs-warm);
+  text-align: left;
+  cursor: text;
+}
+
+.hs-note:hover {
+  border-left-color: var(--hs-ink);
+  color: var(--hs-ink);
+}
+
+.hs-note--empty {
+  opacity: 0;
+}
+
+.hs-row:hover .hs-note--empty,
+.hs-note--empty:focus-visible {
+  opacity: 1;
+}
+
+.hs-note-input {
+  width: 100%;
+  margin-top: 3px;
+  padding: 3px 8px;
+  border: 1.5px solid var(--hs-ink);
+  border-radius: 8px;
+  background: var(--hs-paper);
+  font: inherit;
+  font-size: 13px;
+  color: var(--hs-ink);
+}
+
+/* ---------- badges on the site's own tiles and swatches ---------- */
+
+/* Applied to the theme's elements, so it stays to positioning only. */
+.hs-badge-host {
+  position: relative;
+}
+
+.hs-variant-badge,
+.hs-tile-badge {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: var(--hs-ink);
+  color: var(--hs-cream);
+  border: 1.5px solid var(--hs-cream);
+  /* The whole tile is a link; the badge must not eat the click. */
+  pointer-events: none;
+}
+
+.hs-variant-badge {
+  top: 4px;
+  right: 4px;
+}
+
+/* Right-hand side: the theme puts its own "Ausverkauft" sticker top-left. */
+.hs-tile-badge {
+  top: 10px;
+  right: 10px;
+}
+
+/* ---------- product page control ---------- */
+
+.hs-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 14px 0 4px;
+  color: var(--hs-ink);
+}
+
+.hs-pill {
+  display: flex;
+  border: 2px solid var(--hs-ink);
+  border-radius: 999px;
+  background: var(--hs-cream);
+  overflow: hidden;
+}
+
+.hs-seg {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 11px 4px;
+  border: none;
+  border-right: 2px solid var(--hs-ink);
+  background: var(--hs-paper);
+  font: inherit;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--hs-ink);
+  cursor: pointer;
+}
+
+/* Labels on one line: wrapping is what made the pill look stretched. */
+.hs-seg span {
+  white-space: nowrap;
+}
+
+.hs-seg:last-child {
+  border-right: none;
+}
+
+.hs-seg:hover {
+  background: var(--hs-cream);
+}
+
+.hs-seg[aria-pressed="true"] {
+  background: var(--hs-ink);
+  color: var(--hs-cream);
+}
+
+/* One row, two objects: the rating group takes the space, "later" takes what
+   it needs. align-items: stretch is what keeps them the same height without
+   hard-coding one. */
+.hs-control-row {
+  display: flex;
+  align-items: stretch;
+  gap: 9px;
+  max-width: 100%;
+}
+
+.hs-control-row .hs-pill {
+  flex: 1;
+  /* Without this a flex item refuses to shrink below its content and pushes
+     the page into a sideways scroll on narrow screens. */
+  min-width: 0;
+}
+
+.hs-later {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 18px;
+  white-space: nowrap;
+  border: 2px solid var(--hs-ink);
+  border-radius: 999px;
+  background: var(--hs-paper);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--hs-ink);
+  cursor: pointer;
+}
+
+.hs-later:hover {
+  background: var(--hs-cream);
+}
+
+.hs-later[aria-pressed="true"] {
+  background: var(--hs-ink);
+  color: var(--hs-cream);
+}
+
+.hs-note-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.hs-note-add {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--hs-warm);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.hs-note-add:hover {
+  color: var(--hs-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hs-card {
+    transition: none;
+  }
+}
+
+/* Below this the four items stop fitting on one line, so "later" drops to its
+   own full-width row — variant A on desktop, variant B on a phone. In column
+   the button no longer stretches to the pill's height, so it needs its own. */
+@media (max-width: 560px) {
+  .hs-control-row {
+    flex-direction: column;
+  }
+
+  .hs-later {
+    padding: 10px 18px;
+  }
+}
+
+@media (max-width: 620px) {
+  .hs-row {
+    grid-template-columns: 46px minmax(0, 1fr);
+  }
+
+  .hs-row > img {
+    width: 46px;
+    height: 46px;
+  }
+
+  .hs-row-actions {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+}

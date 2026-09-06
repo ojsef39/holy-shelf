@@ -1,0 +1,25 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "node scripts/set-version.mjs ${nextRelease.version} && npm run build",
+        "publishCmd": "./scripts/publish-amo.sh ${nextRelease.version}"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {
+            "path": "web-ext-artifacts/*.zip",
+            "label": "holy-shelf ${nextRelease.version} (unsigned)"
+          }
+        ]
+      }
+    ]
+  ]
+}

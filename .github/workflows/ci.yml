@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # semantic-release needs the full history to work out the next
+          # version, and its own credentials to push the release commit.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint the extension
+        run: npm run lint
+
+      - name: Package (the same build step the release runs)
+        run: npm run build
+
+      - name: Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # AMO signs and publishes the listed version. Absent, the release
+          # still happens and only the AMO submission is skipped.
+          WEB_EXT_API_KEY: ${{ secrets.MOZ_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.MOZ_JWT_KEY }}
+        run: npx semantic-release
