@@ -596,7 +596,12 @@
       );
       if (inOurs) return;
 
-      const tab = event.target.closest?.("[data-account-tab]");
+      /* data-account-tab is on the tab BUTTONS and on the wrapper holding each
+         tab's content, so closest() on a click in the Rewards panel's padding
+         returned tab="rewards" and put our panel away. Only a control counts. */
+      const tab = event.target.closest?.(
+        "button[data-account-tab], a[data-account-tab]"
+      );
       if (!tab) return;
       if (tab.getAttribute("data-account-tab") !== TAB) setActive(false);
     });
