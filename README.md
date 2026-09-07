@@ -2,6 +2,8 @@
 
 Flavor lists for [holy.com](https://de.holy.com), as a browser extension.
 
+![The Lists tab on the HOLY account page](showcase.gif)
+
 Four lists: **Favorit**, **Mag ich**, **Nix für mich** — one rating per flavor,
 mutually exclusive — plus **Später**, which is independent, because wanting to
 buy a flavor later is not an opinion about how it tastes.
