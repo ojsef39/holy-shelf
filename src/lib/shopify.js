@@ -27,9 +27,9 @@
   const SEPARATOR = "::";
   const FLAVOR_OPTION = /^(flavou?r|geschmack|sorte)$/i;
 
-  /* p2: the shape changed when variants were added; old entries are ignored. */
+  /* p3: the shape changed when type was added; old entries are ignored. */
   function cacheKey(handle) {
-    return `p2:${location.host}:${handle}`;
+    return `p3:${location.host}:${handle}`;
   }
 
   function currency() {
@@ -64,6 +64,9 @@
       handle: json.handle,
       title: json.title,
       url: json.url,
+      /* The shop's own taxonomy, "01 - Energy Bundle". Not localized — fr
+         returns the same string — so it is safe to match English words on. */
+      type: json.type ?? "",
       available: Boolean(json.available),
       image: absolute(json.featured_image ?? json.images?.[0] ?? null),
       /* When the option is named Flavor, each variant is its own flavor and

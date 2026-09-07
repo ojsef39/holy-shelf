@@ -26,6 +26,15 @@ globalThis.HolyShelf.messages.en = {
   sortPrice: { message: "Price" },
   sortStock: { message: "Availability" },
 
+  filterLabel: { message: "Type" },
+  filterAll: { message: "All" },
+  catEnergy: { message: "Energy" },
+  catHydration: { message: "Hydration" },
+  catIcedTea: { message: "Iced Tea" },
+  catMilkshake: { message: "Milkshake" },
+  catSyrup: { message: "Syrup" },
+  catOther: { message: "Other" },
+
   available: { message: "In stock" },
   soldOut: { message: "Sold out" },
   openProduct: { message: "Open" },

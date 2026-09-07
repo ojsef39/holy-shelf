@@ -234,6 +234,12 @@ html.hs-lists-active
   opacity: 0.85;
 }
 
+.hs-count {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
 .hs-rows {
   border: 2px solid var(--hs-ink);
   border-radius: 18px;

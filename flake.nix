@@ -22,6 +22,11 @@
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
 
+        # The same node CI runs on. Renovate bumps this attribute and the
+        # workflow's node-version together — see customManagers in
+        # renovate.json — so the shell can't drift away from the build.
+        node = pkgs.nodejs_24;
+
         # web-ext and semantic-release are pinned in package.json, so the shell
         # ships node and each script installs from the lockfile on demand.
         # Firefox is deliberately absent: nixpkgs has no darwin build of it, and
@@ -31,7 +36,7 @@
           cd "$(${pkgs.git}/bin/git rev-parse --show-toplevel)"
           if [ ! -d node_modules ] || [ package-lock.json -nt node_modules ]; then
             echo "=> Installing npm dependencies..."
-            ${pkgs.nodejs_22}/bin/npm ci
+            ${node}/bin/npm ci
           fi
         '';
 
@@ -50,7 +55,7 @@
           # it up in profiles.ini instead of treating it as a directory, and
           # Firefox opens the profile manager rather than the browser.
           echo "=> Launching Firefox with Holy Shelf loaded..."
-          ${pkgs.nodejs_22}/bin/npm start -- \
+          ${node}/bin/npm start -- \
             --firefox-profile "$PWD/.dev-profile" \
             --profile-create-if-missing \
             --keep-profile-changes \
@@ -62,13 +67,13 @@
           echo "=> Running alejandra..."
           ${pkgs.alejandra}/bin/alejandra .
           echo "=> Running web-ext lint..."
-          ${pkgs.nodejs_22}/bin/npm run lint
+          ${node}/bin/npm run lint
         '';
 
         d-build = pkgs.writeShellScriptBin "d-build" ''
           ${preamble}
           echo "=> Packaging into web-ext-artifacts/..."
-          ${pkgs.nodejs_22}/bin/npm run build
+          ${node}/bin/npm run build
         '';
       in {
         default = pkgs.mkShell {
@@ -77,7 +82,7 @@
             d-lint
             d-build
 
-            pkgs.nodejs_22
+            node
             pkgs.alejandra
           ];
         };

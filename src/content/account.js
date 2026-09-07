@@ -27,7 +27,27 @@
     { id: "stock", label: "sortStock", key: (row) => (row.available ? 0 : 1) }
   ];
 
-  let view = { list: null, sort: "added", direction: 1 };
+  /**
+   * Product types are the shop's own, "01 - Energy Bundle" — one per range,
+   * plus a numbered variation per format (sachet, sachet box, bundle). We only
+   * care about the range, so we match the word and let everything the lists can
+   * hold but nobody thinks of as a flavor — shakers, merch, spare parts — fall
+   * into "other".
+   */
+  const CATEGORIES = [
+    { id: "energy", label: "catEnergy", test: /energy/i },
+    { id: "hydration", label: "catHydration", test: /hydration/i },
+    { id: "icedtea", label: "catIcedTea", test: /iced\s*tea/i },
+    { id: "milkshake", label: "catMilkshake", test: /milkshake/i },
+    { id: "syrup", label: "catSyrup", test: /syrup/i },
+    { id: "other", label: "catOther", test: null }
+  ];
+
+  function categoryOf(type) {
+    return CATEGORIES.find((c) => c.test?.test(type ?? ""))?.id ?? "other";
+  }
+
+  let view = { list: null, sort: "added", direction: 1, category: null };
   let root = null;
 
   /* ---------- nav ---------- */
@@ -188,6 +208,7 @@
           key: entry.key,
           ts: entry.ts,
           note: entry.note,
+          category: categoryOf(product.type),
           title: product.flavorOption && variant ? variant.title : product.title,
           subtitle: product.flavorOption
             ? product.title
@@ -284,7 +305,7 @@
       card.appendChild(body);
 
       card.addEventListener("click", () => {
-        view = { list: list.id, sort: "added", direction: 1 };
+        view = { list: list.id, sort: "added", direction: 1, category: null };
         render();
       });
 
@@ -355,6 +376,9 @@
     }
     section.appendChild(sortbar);
 
+    const filterbar = renderFilterbar(rows);
+    if (filterbar) section.appendChild(filterbar);
+
     if (rows.length === 0) {
       const empty = document.createElement("div");
       empty.className = "hs-empty";
@@ -364,12 +388,63 @@
       return section;
     }
 
+    const shown = view.category
+      ? rows.filter((row) => row.category === view.category)
+      : rows;
+
     const table = document.createElement("div");
     table.className = "hs-rows";
-    for (const product of rows) table.appendChild(renderRow(product, listId));
+    for (const product of shown) table.appendChild(renderRow(product, listId));
     section.appendChild(table);
 
     return section;
+  }
+
+  /**
+   * Chips for the ranges this list actually holds, so a list of nothing but
+   * energy flavors doesn't grow a row of empty filters. Null when there is
+   * nothing to narrow down.
+   */
+  function renderFilterbar(rows) {
+    const present = CATEGORIES.map((category) => ({
+      ...category,
+      count: rows.filter((row) => row.category === category.id).length
+    })).filter((category) => category.count > 0);
+
+    if (present.length < 2) return null;
+
+    /* The selected range can vanish while the tab is open — removing the last
+       syrup, or a sync from another device. Show everything rather than an
+       empty table under a chip that is no longer there. */
+    if (view.category && !present.some((c) => c.id === view.category)) {
+      view = { ...view, category: null };
+    }
+
+    const bar = document.createElement("div");
+    bar.className = "hs-sortbar";
+    const label = document.createElement("span");
+    label.textContent = t("filterLabel");
+    bar.appendChild(label);
+
+    const options = [{ id: null, label: "filterAll", count: rows.length }, ...present];
+    for (const option of options) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "hs-chip";
+      chip.setAttribute("aria-pressed", String(option.id === view.category));
+      chip.textContent = t(option.label);
+      const count = document.createElement("span");
+      count.className = "hs-count";
+      count.textContent = String(option.count);
+      chip.appendChild(count);
+      chip.addEventListener("click", () => {
+        view = { ...view, category: option.id };
+        render();
+      });
+      bar.appendChild(chip);
+    }
+
+    return bar;
   }
 
   function renderRow(product, listId) {
@@ -521,7 +596,12 @@
       );
       if (inOurs) return;
 
-      const tab = event.target.closest?.("[data-account-tab]");
+      /* data-account-tab is on the tab BUTTONS and on the wrapper holding each
+         tab's content, so closest() on a click in the Rewards panel's padding
+         returned tab="rewards" and put our panel away. Only a control counts. */
+      const tab = event.target.closest?.(
+        "button[data-account-tab], a[data-account-tab]"
+      );
       if (!tab) return;
       if (tab.getAttribute("data-account-tab") !== TAB) setActive(false);
     });
