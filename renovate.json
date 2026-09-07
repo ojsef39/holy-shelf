@@ -1,5 +1,23 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>JHOFER-Cloud/renovate-presets//default"],
-  "reviewers": ["ojsef39"]
+  "reviewers": ["ojsef39"],
+  "customManagers": [
+    {
+      "description": "The dev shell's node, which no manager knows how to read",
+      "customType": "regex",
+      "managerFilePatterns": ["/^flake\\.nix$/"],
+      "matchStrings": ["pkgs\\.nodejs_(?<currentValue>\\d+)"],
+      "depNameTemplate": "node",
+      "datasourceTemplate": "node-version",
+      "versioningTemplate": "node"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "One PR for node, so the flake and the workflow never drift",
+      "matchDepNames": ["node"],
+      "groupName": "node"
+    }
+  ]
 }
