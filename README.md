@@ -145,6 +145,15 @@ adjust it if AMO assigns a different one. The id must stay
 `holy-shelf@jhofer.de`, since that's what `manifest.json` declares and what
 `storage.sync` is tied to.
 
+**Chrome, untested.** Nothing here is Firefox-only — the gecko keys in the
+manifest are simply ignored elsewhere — but no release has ever been run in
+Chrome, so treat it as unverified rather than supported. To try it, unzip a
+release asset, then `chrome://extensions` → Developer mode → Load unpacked.
+That survives restarts, unlike a Firefox temporary add-on, but it doesn't
+auto-update and Chrome nags about it on every launch. A one-click install would
+mean the Chrome Web Store, and there is no self-signing route around it: Chrome
+disables `.crx` files that didn't come from the store, whoever signed them.
+
 ## Layout
 
 ```
