@@ -25,7 +25,7 @@
         # The same node CI runs on. Renovate bumps this attribute and the
         # workflow's node-version together — see customManagers in
         # renovate.json — so the shell can't drift away from the build.
-        node = pkgs.nodejs_24;
+        node = pkgs.nodejs_26;
 
         # web-ext and semantic-release are pinned in package.json, so the shell
         # ships node and each script installs from the lockfile on demand.
